@@ -1,8 +1,12 @@
 const D3Node = require('d3-node')
 
-const options = { selector: '#chart', container: '<div id="container"><div id="chart"></div></div>' }
+const options = { selector: '#chart', container: '<style>.line{fill:none;stroke:green;stroke-width:5px;}</style><div id="container"><div id="chart"></div></div>' }
 const d3n = new D3Node(options)
 const d3 = d3n.d3
+
+var fs = require('fs');
+var pdf = require('dynamic-html-pdf');
+// var html = fs.readFileSync('template.html', 'utf8');
 
 
 
@@ -53,6 +57,27 @@ svg.append("g")
 svg.append("g")
     .call(d3.axisLeft(y));
 
-let svgStr = d3n.svgString()
+// let svgStr = d3n.svg()
+let html = d3n.html();
 
-console.log(svgStr)
+
+var pdfOptions = {
+    format: "A3",
+    orientation: "portrait",
+    border: "10mm"
+};
+
+var document = {
+    type: 'file',     // 'file' or 'buffer'
+    template: html,
+    context: {},
+    path: "./output.pdf"    // it is not required if type is buffer
+};
+
+pdf.create(document, pdfOptions)
+    .then(res => {
+        console.log(res)
+    })
+    .catch(error => {
+        console.error(error)
+    });
